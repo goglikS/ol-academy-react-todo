@@ -1,0 +1,37 @@
+.todoItem {
+  display: block;
+  border: 1px solid #ccc;
+
+  .todoItemStatus {
+    margin-left: 10px;
+  }
+  .todoItemCheck {
+    margin-left: 10px;
+  }
+}
+
+.btnRemove {
+  background-color: #a01919;
+}
+.btnUp {
+  background-color: #13aa34;
+}
+.btnMove:hover {
+  background-color: #0c7a24;
+}
+
+.btnDown {
+  background-color: #13aa34;
+}
+.btnEdit {
+  background-color: #808080;
+}
+.btnEdit:hover {
+  background-color: #3f3d3d;
+}
+.Active {
+  font-size: 100px;
+}
+.strike {
+  text-decoration: line-through;
+}
