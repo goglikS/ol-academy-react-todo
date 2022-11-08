@@ -1,7 +1,7 @@
 import "./App.css";
-import TodoList from "./components/todoUsingClasses/TodoList";
-import TodoHooks from "./components/todoUsingHooks/TodoHooks";
-import "./components/todoUsingHooks/Todo.scss";
+import TodoList from "./components/TodoUsingClasses/TodoList";
+import TodoHooks from "./components/TodoUsingHooks/TodoHooks";
+import "./components/TodoUsingHooks/Todo.scss";
 
 function App() {
   return (

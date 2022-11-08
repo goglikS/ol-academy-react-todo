@@ -35,6 +35,10 @@
 
 .strike {
   text-decoration: line-through;
+  cursor: pointer;
+}
+.todo {
+  cursor: pointer;
 }
 ul {
   list-style: none;

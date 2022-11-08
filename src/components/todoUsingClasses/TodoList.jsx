@@ -15,8 +15,8 @@ export default class TodoList extends Component {
     };
   }
 
-  onChange = (e) => {
-    this.setState({ value: e.target.value });
+  onChange = ({ target: { value } }) => {
+    this.setState({ value });
   };
 
   onAddTask = (e) => {
@@ -32,7 +32,8 @@ export default class TodoList extends Component {
       const obj = {
         id: Date.now(),
         name: this.state.value,
-        isDone: "False",
+        isDone: false,
+        isComplete: false,
       };
 
       if (this.state.value !== "") {
@@ -52,6 +53,7 @@ export default class TodoList extends Component {
       if (todo.id === id) {
         todo.name = newValue;
       }
+      return todo;
     });
   };
 
@@ -61,31 +63,48 @@ export default class TodoList extends Component {
     this.setState({ editing: false });
   };
 
-  todoEdit = (todo) => {
+  todoEdit = ({ id, name }) => {
     this.setState({
       editing: true,
-      currentid: todo.id,
-      currentValue: todo.name,
+      currentid: id,
+      currentValue: name,
     });
   };
 
-  onEditInputChange = (e) => {
-    this.setState({ currentValue: e.target.value });
+  onEditInputChange = ({ target: { value } }) => {
+    this.setState({ value });
   };
 
-  handleCheckbox = (todo) => {
-    if (todo.isDone === "False") {
-      todo.isDone = "Done";
-    } else todo.isDone = "False";
-
-    this.setState(({ todos }) => ({
-      todos: todos.filter((todo) => !todo.selected),
-    }));
+  handleCheckbox = (editedTodo) => {
+    this.setState({
+      todos: this.state.todos.map((todo) => {
+        if (todo.id === editedTodo.id) {
+          todo.isComplete = !todo.isComplete;
+        }
+        return todo;
+      }),
+    });
   };
 
+  handleTaskDone = (editedTodo) => {
+    this.setState({
+      todos: this.state.todos.map((todo) => {
+        if (todo.id === editedTodo.id) {
+          todo.isDone = !todo.isDone;
+        }
+        return todo;
+      }),
+    });
+  };
   onDeleteDone = () => {
     this.setState({
-      todos: [...this.state.todos].filter((isDone) => isDone.isDone !== "Done"),
+      todos: [...this.state.todos].filter(({ isDone }) => !isDone),
+    });
+  };
+
+  onDeleteComplete = () => {
+    this.setState({
+      todos: [...this.state.todos].filter(({ isComplete }) => !isComplete),
     });
   };
 
@@ -96,7 +115,7 @@ export default class TodoList extends Component {
   };
 
   move = (todo, moveValue, index) => {
-    let todoList = this.state.todos;
+    let todoList = [...this.state.todos];
     const fromIndex = todoList.indexOf(todo);
     if (fromIndex !== index) {
       const toIndex = fromIndex + moveValue;
@@ -121,7 +140,7 @@ export default class TodoList extends Component {
   render() {
     return (
       <div className="todoList">
-      <h1>To Do List</h1>
+        <h1>To Do List</h1>
         <Editing
           value={this.state.value}
           currentValue={this.state.currentValue}
@@ -145,6 +164,12 @@ export default class TodoList extends Component {
             >
               Delete Done
             </button>
+            <button
+              className="btn btnRemove"
+              onClick={() => this.onDeleteComplete()}
+            >
+              Delete Complete
+            </button>
           </div>
           <ul>
             {this.state.todos.map((todo) => (
@@ -152,8 +177,10 @@ export default class TodoList extends Component {
                 key={todo.id}
                 name={todo.name}
                 isDone={todo.isDone}
+                isComplete={todo.isComplete}
                 onDeleteTask={() => this.onDeleteTask(todo.id)}
                 handleCheckbox={() => this.handleCheckbox(todo)}
+                handleTaskDone={() => this.handleTaskDone(todo)}
                 moveUp={() => this.moveUp(todo)}
                 moveDown={() => this.moveDown(todo)}
                 todoEdit={() => this.todoEdit(todo)}

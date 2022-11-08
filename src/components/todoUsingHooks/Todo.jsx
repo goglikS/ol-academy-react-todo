@@ -4,15 +4,11 @@ const Todo = ({
   todo,
   moveUp,
   moveDown,
+  handleTaskStatus,
   handleEdit,
-  handleUpdate,
   onDeleteTodo,
+  handleSelectedTask,
 }) => {
-  const handleChange = () => {
-    todo.isDone = !todo.isDone;
-    handleUpdate();
-  };
-
   return (
     <li>
       <div
@@ -20,9 +16,18 @@ const Todo = ({
         value={todo.id}
         className={todo.isDone ? "todo strike" : "todo"}
       >
-        <span className="todoItemName">Task : {todo.task} </span>
+        <span
+          className="todoItemName"
+          onClick={() => handleTaskStatus(todo.id)}
+        >
+          Task : {todo.task}{" "}
+        </span>
         <span>
-          <input type="checkbox" className="checkBox" onClick={handleChange} />
+          <input
+            type="checkbox"
+            className="checkBox"
+            onClick={() => handleSelectedTask(todo.id)}
+          />
         </span>
       </div>
 

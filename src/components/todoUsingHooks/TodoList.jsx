@@ -3,9 +3,10 @@ import Todo from "./Todo";
 
 const TodoList = ({
   todoList,
-  handleUpdate,
   onDeleteTodo,
   handleEdit,
+  handleTaskStatus,
+  handleSelectedTask,
   moveUp,
   moveDown,
 }) => {
@@ -16,7 +17,8 @@ const TodoList = ({
           <Todo
             key={todo.id}
             todo={todo}
-            handleUpdate={handleUpdate}
+            handleTaskStatus={handleTaskStatus}
+            handleSelectedTask={handleSelectedTask}
             onDeleteTodo={onDeleteTodo}
             moveUp={moveUp}
             moveDown={moveDown}

@@ -8,8 +8,12 @@ function TodoHooks() {
   const [showEdit, setshowEdit] = useState(false);
   const [currentId, setcurrentId] = useState();
 
-  const handleChange = (e) => {
-    setUserInput(e.target.value);
+  const handleChange = ({ target: { value } }) => {
+    setUserInput(value);
+  };
+
+  const handleTaskStatus = (id) => {
+    handleToggle(id);
   };
 
   const handleSubmit = (e) => {
@@ -18,38 +22,21 @@ function TodoHooks() {
     setUserInput("");
   };
 
-  const handleEdit = (todo) => {
+  const handleEdit = ({ task, id }) => {
     setshowEdit(true);
-    setUserInput(todo.task);
-    setcurrentId(todo.id);
+    setUserInput(task);
+    setcurrentId(id);
   };
 
   const updateTodo = (e) => {
     e.preventDefault();
     onEditTodo(currentId, userInput);
-    handleToggle();
     setUserInput("");
     setshowEdit(false);
   };
 
   const onEditTodo = (currentId, userInput) => {
-    const isFound = todoList.some((todo) => {
-      if (todo.task === userInput) {
-        return true;
-      }
-      return false;
-    });
-    if (!isFound && userInput !== "") {
-      todoList.map((todo) => {
-        if (todo.id === currentId) {
-          todo.task = userInput;
-        }
-      });
-    } else alert("Wrong Value");
-  };
-
-  const addTask = (userInput) => {
-    const isFound = todoList.some((todo) => {
+    const isFound = todoList.find((todo) => {
       if (todo.task === userInput) {
         return true;
       }
@@ -58,36 +45,59 @@ function TodoHooks() {
 
     if (!isFound && userInput !== "") {
       let todos = [...todoList];
-      todos = [...todos, { id: Date.now(), task: userInput, isDone: false }];
+      todos.map((todo) => {
+        if (todo.id === currentId) {
+          todo.task = userInput;
+        }
+        return todo;
+      });
       settodoList(todos);
     } else alert("Wrong Value");
   };
 
-  const handleToggle = (id) => {
-    let mapped = todoList.map((task) => {
-      return task.id === Number(id)
-        ? { ...task, isDone: !task.isDone }
-        : { ...task };
+  const addTask = (userInput) => {
+    const isFound = todoList.find((todo) => {
+      if (todo.task === userInput) {
+        return true;
+      }
+      return false;
     });
-    settodoList(mapped);
+
+    if (!isFound && userInput !== "") {
+      let todos = [...todoList];
+      todos = [
+        ...todos,
+        { id: Date.now(), task: userInput, isDone: false, isChecked: false },
+      ];
+      settodoList(todos);
+    } else alert("Wrong Value");
   };
 
-  const handleUpdate = () => {
-    let mapped = todoList.map((task) => {
-      return { ...task };
-    });
-    settodoList(mapped);
-  };
+  const handleToggle = (id) =>
+    settodoList(
+      todoList.map((task) => ({
+        ...task,
+        isDone: task.id === Number(id) ? !task.isDone : task.isDone,
+      }))
+    );
 
   const onDeleteAll = () => {
     settodoList([]);
   };
 
   const onDeleteDone = () => {
-    settodoList([...todoList].filter((task) => task.isDone !== true));
+    settodoList([...todoList].filter(({ isDone }) => !isDone));
     setshowEdit(false);
     setUserInput("");
   };
+
+  const handleSelectedTask = (id) =>
+    settodoList(
+      todoList.map((task) => ({
+        ...task,
+        isChecked: task.id === Number(id) ? !task.isChecked : task.isChecked,
+      }))
+    );
 
   const onDeleteTodo = (delId) => {
     settodoList(todoList.filter(({ id }) => id !== delId));
@@ -95,15 +105,20 @@ function TodoHooks() {
     setUserInput("");
   };
 
+  const deleteSelected = () => {
+    settodoList([...todoList].filter(({ isChecked }) => !isChecked));
+    setshowEdit(false);
+    setUserInput("");
+  };
+
   const move = (todo, moveValue, index) => {
-    let todos = todoList;
+    let todos = [...todoList];
     const fromIndex = todos.indexOf(todo);
     if (fromIndex !== index) {
       const toIndex = fromIndex + moveValue;
       const temp = todos.splice(fromIndex, 1)[0];
       todos.splice(toIndex, 0, temp);
       settodoList(todos);
-      handleToggle();
     }
   };
 
@@ -127,6 +142,9 @@ function TodoHooks() {
       </button>
       <button onClick={onDeleteDone} className="btn btnRemove">
         Delete Done
+      </button>
+      <button onClick={deleteSelected} className="btn btnRemove">
+        Delete Selected
       </button>
 
       {showEdit ? (
@@ -153,12 +171,12 @@ function TodoHooks() {
 
       <TodoList
         todoList={todoList}
-        handleToggle={handleToggle}
-        handleUpdate={handleUpdate}
         onDeleteTodo={onDeleteTodo}
         moveUp={moveUp}
         moveDown={moveDown}
         handleEdit={handleEdit}
+        handleTaskStatus={handleTaskStatus}
+        handleSelectedTask={handleSelectedTask}
       />
     </div>
   );

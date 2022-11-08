@@ -5,9 +5,13 @@ export default class Todo extends Component {
   render() {
     return (
       <li className="todoItem">
-        <div className={this.props.isDone === "Done" ? "todo strike" : "task"}>
-          <span className="todoItemName">Task : {this.props.name} </span>
-          <span className="todoItemStatus">isDone : {this.props.isDone} </span>
+        <div>
+          <span
+            className={this.props.isDone ? "todo strike" : "todoItemName"}
+            onClick={() => this.props.handleTaskDone(this.props)}
+          >
+            Task : {this.props.name}{" "}
+          </span>
           <span className="todoItemCheck">
             <input
               type="checkbox"
